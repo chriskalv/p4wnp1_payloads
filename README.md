@@ -12,4 +12,4 @@
 
 <br></br>
 
-:x: **I assume ZERO responsibility for what you do with these payloads. My sole intention is to demo keystroke injection on a P4wnP1.** :x:
+:x: **I assume ZERO responsibility for what you do with these. My sole intention is to demo keystroke injection.** :x:
