@@ -6,8 +6,9 @@
 
 ### How to use the payloads
 
-+ HIDScripts (the .js files) should be placed in `/usr/local/P4wnP1/HIDScripts`, or can just be copied & pasted into to the "HIDScripts" section of the P4wnP1 web interface.
-+ For the extraction of browser-based data (hitory, bookmarks, donwload logs, etc.), download `browser_booty.exe` and copy the file to `/tools/` on your P4wnP1 device.
++ Enable keyboard and USB mass storage capability on your P4wnP1.
++ HIDScripts (the .js files) should be placed in `/usr/local/P4wnP1/HIDScripts`, or can just be pasted into to the "HIDScripts" section of the P4wnP1 web interface.
++ For the extraction of browser-based data (hitory, bookmarks, donwload logs, etc.), download `browser_booty.exe` and copy the file to `/tools/` on your P4wnP1 mass storage device.
 + If internet access is required at any point and you don't know how to proceed, [this video](https://youtu.be/QEWaIoal5qU) explains the connection process fairly well.
 
 <br></br>
