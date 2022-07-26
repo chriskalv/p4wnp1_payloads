@@ -2,19 +2,19 @@
 # AllinOne_extraction.js														   #
 # Extraction of folder/file structures, targeted files in specified folders, saved wifi Passwords and browsing history/bookmarks/logs      #
 # Author: chriskalv                                                                                                                        #
-#													                                   #                                                    #
+#													                                   #
 # PREREQUISTES:                                                                                                                            #
 # - Enable keyboard and USB mass storage capability on your P4wnP1.                                                                        #
-# - Place browser_booty.exe in /tools in order to be able to extract browser data.                                                         #
-# - Edit global settings below to your liking.                                                                                             #
+# - Place browser_booty.exe in P4wnP1:\tools in order to be able to extract browser data.                                                  #
+# - Edit global settings below.                                                                                                            #
 ##########################################################################################################################################*/
 
 
 ////////////////////////// GLOBAL SETTINGS /////////////////////////\
 // GENERAL							   // ---
 layout("de");			                                   // Keyboard layout
-typingSpeed(1,4);		                                   // Typing = really fast
-run_as_admin=false;					           // Set to true to execute powershell as Administrator.
+typingSpeed(0,0);		                                   // Typing = really fast
+run_as_admin=false;					           // Set to true to execute powershell as Administrator (normally not necessary)
 hide=false; 			                                   // Set to true to hide the console window on the target
 exit=true;			                                   // Set to true to exit the console once finished
 var usb_drive = "TEMPUSB"                                          // The name of the P4wnP1's USB storage device
