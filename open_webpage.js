@@ -1,12 +1,12 @@
-/*######################################################\
-# open_webpage.js                                       #
-#   Opens an Internet Explorer page in fullscreen mode  #
-#   Author: NightRang3r on GitHub                       #
-#   Edited by: chriskalv                                #
-#							#
-# PREREQUISTES:                                         #
-# - Enable keyboard emulation on your P4wnP1            #
-#######################################################*/
+/*##########################################################\
+# open_webpage.js                                           #
+#   Opens a webpage in MS Edge browser in fullscreen mode   #
+#   Author: NightRang3r on GitHub                           #
+#   Edited by: chriskalv                                    #
+#							                                              #
+# PREREQUISTES:                                             #
+# - Enable keyboard emulation on your P4wnP1                #
+###########################################################*/
 
 // Set the keyboard layout and speed
 layout('de');          // Set keyboard layout to DE (German)
@@ -20,7 +20,7 @@ function attack() {
   // Open webpage in fullscreen mode via 'run command'
     press("GUI r");
     delay(500);
-    type("iexplore -k https://www.youtube.com/watch?v=dQw4w9WgXcQ\n");
+    type("msedge --start-fullscreen https://www.youtube.com/watch?v=dQw4w9WgXcQ\n");   // rick-rolled
 }
 function check_if_ready() {
     while (ready = "False") {
