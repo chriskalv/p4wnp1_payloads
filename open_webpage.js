@@ -9,25 +9,26 @@
 #######################################################*/
 
 // Set the keyboard layout and speed
-layout('de');   // Set keyboard layout to DE
-typingSpeed(0,0);   // Sets the typing speed to super super fast
+layout('de');          // Set keyboard layout to DE (German)
+typingSpeed(0,0);      // Sets the typing speed to max. fast
 
 // Definition of other variables, arrays, ...
-var delay_time = 5  // The time to wait before executing the attack in seconds
-var ready = "False" // Used to make sure that the attack is ready to be executed
+var delay_time = 5     // The time to wait before executing the attack in seconds
+var ready = "False"    // Used to make sure that the attack is ready to be executed
 
 function attack() {
+  // Open webpage in fullscreen mode via 'run command'
     press("GUI r");
     delay(500);
-    type("iexplore -k https://www.youtube.com/watch?v=dQw4w9WgXcQ\n");  // Open the rickroll youtube page in fullscreen mode
+    type("iexplore -k https://www.youtube.com/watch?v=dQw4w9WgXcQ\n");
 }
 function check_if_ready() {
     while (ready = "False") {
-        press("SCROLL");    // Press the 'SCROLL LOCK' button
-        result = waitLED(SCROLL,10) // Wait to see if the 'SCROLL LOCK' has changed for 10ms
+        press("SCROLL");               // Press the 'SCROLL LOCK' button
+        result = waitLED(SCROLL,10)    // Wait to see if the 'SCROLL LOCK' has changed for 10ms
 
-        if (result.SCROLL) {    // The 'SCROLL LOCK' has changed so we must be connected and ready
-            ready = "True"; // Stop the while loop
+        if (result.SCROLL) {           // The 'SCROLL LOCK' has changed so we must be connected and ready
+            ready = "True";            // Stop the while loop
             break;
         }
     }
