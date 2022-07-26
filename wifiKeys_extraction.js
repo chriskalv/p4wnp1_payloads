@@ -1,6 +1,6 @@
 /*#########################################################################################################################################\
-# wifiKeys_extraction.js														    #
-# Extraction of known wifi networks and saved wifi passwords     #
+# wifiKeys_extraction.js														   #
+# Extraction of known wifi networks and saved wifi passwords    									   #
 # Author: chriskalv                                                                                                                        #
 #													                                   #
 # PREREQUISTES:                                                                                                                            #
