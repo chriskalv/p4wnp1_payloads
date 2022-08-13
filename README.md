@@ -1,5 +1,7 @@
 # P4wnP1 A.L.O.A. Payloads
 
+I've built my P4wnP1 after beboxos' version with a navigable OLED display, which you can find [here](https://github.com/beboxos/P4wnP1_ALOA_OLED_MENU_V2).
+
 + All of my payloads use the **DE** (German) keyboard layout.
 + All processes in the scripts are explained to some basic extent within the source code.
 + Global settings are placed at the top of the source code, so you can easily edit the script to your liking/environment.
