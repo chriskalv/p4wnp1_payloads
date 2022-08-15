@@ -2,13 +2,14 @@
 # AllinOne_extraction.js                                                                                                                   #
 #   Extraction of folder/file structures, targeted files in specified folders, saved wifi Passwords, browsing history/bookmarks/logs,      #
 #   Windows credential databases (SAM, system and security files) and users + passwords (hashes) to P4wnP1 mass storage or to              #
-#   an external mass storage of your choice.                                                                                               #
+#   another mass storage of your choice.                                                                                               #
 #                                                                                                                                          #
 #   Author: chriskalv                                                                                                                      #
 #                                                                                                                                          #
 # PREREQUISTES:                                                                                                                            #
 # - Enable keyboard and USB mass storage capability on your P4wnP1.                                                                        #
-# - Place browser_booty.exe in P4wnP1:\tools in order to be able to extract browser data.                                                  #
+# - Place browser_booty.exe in P4wnP1:\tools in order to be able to extract browser data (extract_browserdata=true).                       #                       #
+# - Place pw.exe (modified mimikatz) in P4wnP1:\tools in order to be able to extract users & passwords hashes (extract_mimikatz=true).     #
 # - Edit global settings below.                                                                                                            #
 ##########################################################################################################################################*/
 
