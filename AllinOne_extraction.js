@@ -2,7 +2,7 @@
 # AllinOne_extraction.js                                                                                                                   #
 #   Extraction of folder/file structures, targeted files in specified folders, saved wifi Passwords, browsing history/bookmarks/logs,      #
 #   Windows credential databases (SAM, system and security files) and users + passwords (hashes) to P4wnP1 mass storage or to              #
-#   another mass storage of your choice.                                                                                               #
+#   another mass storage of your choice.                                                                                                   #
 #                                                                                                                                          #
 #   Author: chriskalv                                                                                                                      #
 #                                                                                                                                          #
