@@ -8,10 +8,10 @@
 #                                                                                                                                          #
 # PREREQUISTES:                                                                                                                            #
 # - Enable keyboard and USB mass storage capability on your P4wnP1.                                                                        #
-# - Place browser_booty.exe in P4wnP1:\tools in order to be able to extract browser data (extract_browserdata=true).                       #                       #
+# - Place browser_booty.exe in P4wnP1:\tools in order to be able to extract browser data (extract_browserdata=true).                       # 
 # - Place pw.exe (modified mimikatz) in P4wnP1:\tools in order to be able to extract users & passwords hashes (extract_mimikatz=true).     #
 # - Edit global settings below.                                                                                                            #
-##########################################################################################################################################*/
+\#########################################################################################################################################*/
 
 
 ////////////////////////// GLOBAL SETTINGS /////////////////////////\
