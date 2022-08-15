@@ -7,7 +7,7 @@
 #   Author: chriskalv                                                                                                                      #
 #                                                                                                                                          #
 # PREREQUISTES:                                                                                                                            #
-# - Enable keyboard and USB mass storage capability on your P4wnP1.                                                                        #
+# - Enable keyboard capability and, if you want to extract directly to P4wnP1's microSD, USB mass storage capability in settings.          #
 # - Place browser_booty.exe in P4wnP1:\tools in order to be able to extract browser data (extract_browserdata=true).                       # 
 # - Place pw.exe (modified mimikatz) in P4wnP1:\tools in order to be able to extract users & passwords hashes (extract_mimikatz=true).     #
 # - Edit global settings below.                                                                                                            #
